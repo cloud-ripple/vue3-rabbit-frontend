@@ -5,6 +5,10 @@ import { loginAPI } from '@/apis/user'
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
+//Pinia 管理用户数据
+import { useUserStore } from '@/stores/user'
+// 得到一个Store实例对象，然后可以使用该实例身上的 state数据 和 action函数
+const userStore = useUserStore()
 
 // 表单校验
 // 1. 按照接口字段准备表单对象，并进行绑定
@@ -55,20 +59,19 @@ const doLogin = () => {
     // 如果通过校验才执行登录逻辑
     const { account, password } = form.value
     if (valid) {
-      // 调用接口
-      const res = await loginAPI({
-        account,
-        password
+      // 调用登录接口
+      // const res = await loginAPI({
+      //   account,
+      //   password
+      // })
+      userStore.getUserInfo({ account, password })
+      // console.log('登录结果', res)
+      // 1.提示用户
+      ElMessage({ type: 'success', message: '登录成功' })
+      // 2.跳转首页
+      router.replace({
+        path: '/'
       })
-      console.log('登录结果', res)
-      if (res.code === '1') {
-        // 1.提示用户
-        ElMessage({ type: 'success', message: '登录成功' })
-        // 2.跳转首页
-        router.replace({
-          path: '/'
-        })
-      }
     }
   })
 }
